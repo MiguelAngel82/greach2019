@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: es.salenda.micronaut.java
+---
+testFramework: junit
+sourceLanguage: java

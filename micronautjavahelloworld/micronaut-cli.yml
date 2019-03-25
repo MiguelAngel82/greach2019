@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: micronautjavahelloworld
+---
+testFramework: junit
+sourceLanguage: java
