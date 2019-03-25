@@ -1,4 +1,4 @@
-package micronautjavahelloworld;
+package es.salenda.micronaut.java.helloworld;
 
 import io.micronaut.runtime.Micronaut;
 

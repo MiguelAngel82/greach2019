@@ -9,7 +9,7 @@ apply plugin:"application"
 apply plugin:"java"
 
 version "0.1"
-group "micronautjavahelloworld"
+group "es.salenda.micronaut.java.helloworld"
 
 repositories {
     mavenLocal()
@@ -44,7 +44,7 @@ shadowJar {
 
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
 
-mainClassName = "micronautjavahelloworld.Application"
+mainClassName = "es.salenda.micronaut.java.helloworld.Application"
 tasks.withType(JavaCompile){
     options.encoding = "UTF-8"
     options.compilerArgs.add('-parameters')
