@@ -6,6 +6,11 @@ public class BintrayPackage {
     String name;
     boolean linked;
 
+    BintrayPackage(String name, boolean linked) {
+        this.name = name;
+        this.linked = linked;
+    }
+
     public String getName() {
         return name;
     }

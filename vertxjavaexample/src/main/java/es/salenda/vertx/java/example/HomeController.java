@@ -17,17 +17,17 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
 import io.vertx.micrometer.backends.BackendRegistries;
-import io.vertx.reactivex.ext.web.client.WebClient;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeController extends AbstractVerticle {
     private Timer timerFibonacci, timerWavToMp3, timerPackages;
@@ -36,6 +36,8 @@ public class HomeController extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> fut) {
+        StopWatch watch = new StopWatch();
+        watch.start();
         testService = new TestServiceImpl();
         bintrayClient = new BintrayClient();
 
@@ -81,6 +83,8 @@ public class HomeController extends AbstractVerticle {
                 .listen(
                         config().getInteger("http.port", 8082),
                         result -> {
+                            watch.stop();
+                            System.out.println("Startup completed in: " + watch.getTime() + "ms");
                             if (result.succeeded()) {
                                 fut.complete();
                             } else {
@@ -109,22 +113,15 @@ public class HomeController extends AbstractVerticle {
 
     private void packages(RoutingContext routingContext) {
         timerPackages.record(() -> {
-            List<String> bintrayPackageList = new ArrayList<>();
-            WebClientOptions options = new WebClientOptions().setSsl(true).setTrustAll(true);
-            io.vertx.reactivex.core.Vertx vertx = io.vertx.reactivex.core.Vertx.vertx();
-            WebClient client = WebClient.create(vertx, options);
-
             Single<String> single = bintrayClient.fetchPackages();
-
             single.subscribe(response -> {
-                System.out.println(response);
                 JsonArray data = new JsonArray(response);
-                for (Object object : data) {
-                    if (object instanceof JsonObject) {
-                        JsonObject bintrayPackage = (JsonObject) object;
-                        bintrayPackageList.add(bintrayPackage.getString("name"));
-                    }
-                }
+                List<String> bintrayPackageList;
+                bintrayPackageList = data.stream().map(object -> {
+                    JsonObject bintrayPackageJson = (JsonObject) object;
+                    BintrayPackage bintrayPackage = new BintrayPackage(bintrayPackageJson.getString("name"), bintrayPackageJson.getBoolean("linked"));
+                    return bintrayPackage;
+                }).map(object -> object.name).collect(Collectors.toList());
                 routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(bintrayPackageList));
             });
         });
