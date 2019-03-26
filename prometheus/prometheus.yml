@@ -1,0 +1,24 @@
+# A scrape configuration scraping a Node Exporter and the Prometheus server
+# itself
+scrape_configs:
+  # Scrape the Micronaut every 5 seconds.
+  - job_name: 'micronaut'
+    scrape_interval: 5s
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['192.168.1.52:8090']
+  
+  # Scrape the Springboot every 5 seconds.
+  - job_name: 'springboot'
+    scrape_interval: 5s
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['192.168.1.52:8091']
+
+  # Scrape the Springboot every 5 seconds.
+  - job_name: 'vertx'
+    scrape_interval: 5s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['192.168.1.52:8092']
+

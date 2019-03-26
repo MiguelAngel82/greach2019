@@ -1,3 +1,19 @@
 micronaut:
     application:
         name: micronautgraalexample
+    server:
+        port: 8093
+    metrics:
+        enabled: true
+        export:
+            prometheus:
+                enabled: true
+                step: PT1M
+                descriptions: true
+endpoints:
+    prometheus:
+        sensitive: false
+bintray:
+    organization: micronaut
+    repository: profiles
+    apiversion: v1
