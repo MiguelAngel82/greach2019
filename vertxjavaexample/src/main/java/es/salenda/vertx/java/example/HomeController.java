@@ -81,7 +81,7 @@ public class HomeController extends AbstractVerticle {
                 .createHttpServer()
                 .requestHandler(router::accept)
                 .listen(
-                        config().getInteger("http.port", 8082),
+                        config().getInteger("http.port", 8092),
                         result -> {
                             watch.stop();
                             System.out.println("Startup completed in: " + watch.getTime() + "ms");
