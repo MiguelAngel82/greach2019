@@ -49,11 +49,22 @@ public class HomeController {
         return numbers;
     }
 
-    @Get(uri = "/packages", produces = MediaType.TEXT_PLAIN)
+    @Get(uri = "/packages-reactive", produces = MediaType.TEXT_PLAIN)
     @Timed("resource.packages")
     List<String> packages() {
         List<String> bintrayPackageList = new ArrayList<>();
         Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackages().blockingIterable();
+        for (BintrayPackage bintrayPackage : bintrayPackages) {
+            bintrayPackageList.add(bintrayPackage.name);
+        }
+        return bintrayPackageList;
+    }
+
+    @Get(uri = "/packages-not-reactive", produces = MediaType.TEXT_PLAIN)
+    @Timed("resource.packages.not.reactive")
+    List<String> packagesNotReactive() {
+        List<String> bintrayPackageList = new ArrayList<>();
+        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackagesNotReactive();
         for (BintrayPackage bintrayPackage : bintrayPackages) {
             bintrayPackageList.add(bintrayPackage.name);
         }

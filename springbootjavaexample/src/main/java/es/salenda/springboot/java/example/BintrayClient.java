@@ -1,11 +1,16 @@
 package es.salenda.springboot.java.example;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 public class BintrayClient {
@@ -24,5 +29,17 @@ public class BintrayClient {
                 .bodyToFlux(BintrayPackage.class);
         result.subscribe();
         return result;
+    }
+
+    public List<BintrayPackage> fetchPackagesNotReactive() {
+        RestTemplateBuilder builder = new RestTemplateBuilder();
+        RestTemplate restTemplate = builder.build();
+        ResponseEntity<List<BintrayPackage>> response = restTemplate.exchange(
+                "https://bintray.com/api/v1/repos/micronaut/profiles/packages",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<BintrayPackage>>(){});
+        List<BintrayPackage> bintrayPackages = response.getBody();
+        return bintrayPackages;
     }
 }

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeController extends AbstractVerticle {
-    private Timer timerFibonacci, timerWavToMp3, timerPackages;
+    private Timer timerFibonacci, timerWavToMp3, timerPackagesReactive, timerPackagesNotReactive;
     private TestService testService;
     private BintrayClient bintrayClient;
 
@@ -59,7 +59,9 @@ public class HomeController extends AbstractVerticle {
 
         router.get("/wavToMp3").handler(this::wavToMp3);
 
-        router.get("/packages").handler(this::packages);
+        router.get("/packages-reactive").handler(this::packagesReactive);
+
+        router.get("/packages-not-reactive").handler(this::packagesNotReactive);
 
         router.route("/metrics").handler(ctx -> {
             String response = registry.scrape();
@@ -73,8 +75,12 @@ public class HomeController extends AbstractVerticle {
                 .builder("resource.wavToMp3")
                 .register(registry);
 
-        timerPackages = Timer
-                .builder("resource.packages")
+        timerPackagesReactive = Timer
+                .builder("resource.packages.reactive")
+                .register(registry);
+
+        timerPackagesNotReactive = Timer
+                .builder("resource.packages.not.reactive")
                 .register(registry);
 
         vertx
@@ -111,8 +117,8 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
-    private void packages(RoutingContext routingContext) {
-        timerPackages.record(() -> {
+    private void packagesReactive(RoutingContext routingContext) {
+        timerPackagesReactive.record(() -> {
             Single<String> single = bintrayClient.fetchPackages();
             single.subscribe(response -> {
                 JsonArray data = new JsonArray(response);
@@ -123,6 +129,24 @@ public class HomeController extends AbstractVerticle {
                     return bintrayPackage;
                 }).map(object -> object.name).collect(Collectors.toList());
                 routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(bintrayPackageList));
+            });
+        });
+    }
+
+    private void packagesNotReactive(RoutingContext routingContext) {
+        timerPackagesNotReactive.record(() -> {
+            Future<JsonArray> response = bintrayClient.fetchPackagesNotReactive();
+            response.setHandler(handler -> {
+                if (handler.succeeded()) {
+                    JsonArray data = handler.result();
+                    List<String> bintrayPackageList;
+                    bintrayPackageList = data.stream().map(object -> {
+                        JsonObject bintrayPackageJson = (JsonObject) object;
+                        BintrayPackage bintrayPackage = new BintrayPackage(bintrayPackageJson.getString("name"), bintrayPackageJson.getBoolean("linked"));
+                        return bintrayPackage;
+                    }).map(object -> object.name).collect(Collectors.toList());
+                    routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(bintrayPackageList));
+                }
             });
         });
     }

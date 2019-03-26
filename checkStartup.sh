@@ -2,7 +2,7 @@
 : ${1:?missing jar filename}
 : ${2:?error string not given}
 : ${FILE:=./out}
-[ -x ${WATCH:="/bin/watch"} ] || { echo "$(basename $0): 'watch' command not found" 2>&1; exit 2; }
+[ -x ${WATCH:=$(which watch)} ] || { echo "$(basename $0): 'watch' command not found" 2>&1; exit 2; }
 jar="$1"; shift
 traza="$*"
 

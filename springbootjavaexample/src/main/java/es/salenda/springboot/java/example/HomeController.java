@@ -50,12 +50,24 @@ public class HomeController {
         return numbers;
     }
 
-    @GetMapping(value = "/packages")
+    @GetMapping(value = "/packages-reactive")
     @ResponseBody
-    @Timed("resource.packages")
+    @Timed("resource.packages.reactive")
     public List<String> packages(){
         List<String> bintrayPackageList = new ArrayList<>();
         Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackages().toIterable();
+        for(BintrayPackage bintrayPackage: bintrayPackages) {
+            bintrayPackageList.add(bintrayPackage.name);
+        }
+        return bintrayPackageList;
+    }
+
+    @GetMapping(value = "/packages-not-reactive")
+    @ResponseBody
+    @Timed("resource.packages.reactive")
+    public List<String> packagesNotReactive(){
+        List<String> bintrayPackageList = new ArrayList<>();
+        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackagesNotReactive();
         for(BintrayPackage bintrayPackage: bintrayPackages) {
             bintrayPackageList.add(bintrayPackage.name);
         }
