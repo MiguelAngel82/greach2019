@@ -16,12 +16,15 @@ import java.util.List;
 public class HomeController {
 
     private final BintrayClient bintrayClient;
+    private final BritishNationalBibliographyClient britishNationalBibliographyClient;
+
 
     protected final TestService testService;
 
-    public HomeController(TestService testService, BintrayClient bintrayClient) {
+    public HomeController(TestService testService, BintrayClient bintrayClient, BritishNationalBibliographyClient britishNationalBibliographyClient) {
         this.testService = testService;
         this.bintrayClient = bintrayClient;
+        this.britishNationalBibliographyClient = britishNationalBibliographyClient;
     }
 
     @Get("/wavToMp3")
@@ -69,5 +72,10 @@ public class HomeController {
             bintrayPackageList.add(bintrayPackage.name);
         }
         return bintrayPackageList;
+    }
+
+    @Get(uri = "/bnb", produces = MediaType.TEXT_PLAIN)
+    String bnb() {
+        return britishNationalBibliographyClient.fetchInformation();
     }
 }
