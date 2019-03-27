@@ -5,9 +5,9 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 
 @Client("http://api.open-notify.org")
-public interface BritishNationalBibliographyLowLevelClient {
+public interface OpenNotifyClient {
 
-    @Get("iss-now.json")
-    JSONPObject fetchInformation();
+    @Get("/iss-now.json")
+    IssNow fetchInformation();
 
 }
