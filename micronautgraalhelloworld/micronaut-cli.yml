@@ -1,5 +1,0 @@
-profile: service
-defaultPackage: es.salenda.micronaut.graal
----
-testFramework: junit
-sourceLanguage: java

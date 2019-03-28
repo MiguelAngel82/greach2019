@@ -7,15 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
-
 @Singleton
 public class TestServiceImpl implements TestService {
 
     @Override
     public void wavToMp3(File wavFile, File mp3File) throws IOException {
-        String[] mp3Args = { "--preset","standard",
-                "-q","0",
-                "-m","s",
+        String[] mp3Args = {"--preset", "standard",
+                "-q", "0",
+                "-m", "s",
                 wavFile.getAbsolutePath(),
                 mp3File.getAbsolutePath()
         };

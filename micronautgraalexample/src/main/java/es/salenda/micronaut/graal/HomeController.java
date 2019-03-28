@@ -52,7 +52,7 @@ public class HomeController {
     @Timed("resource.asterank.reactive")
     List<String> asteranks() {
         List<String> asterankList = new ArrayList<>();
-        Iterable<Asterank> asteranks = asterankClient.fetchPackages().blockingIterable();
+        Iterable<Asterank> asteranks = asterankClient.fetchAsteroids().blockingIterable();
         for (Asterank asterank : asteranks) {
             asterankList.add(asterank.readable_des);
         }
@@ -63,7 +63,7 @@ public class HomeController {
     @Timed("resource.asterank.not.reactive")
     List<String> asteranksNotReactive() {
         List<String> asterankList = new ArrayList<>();
-        Iterable<Asterank> asteranks = asterankClient.fetchPackagesNotReactive();
+        Iterable<Asterank> asteranks = asterankClient.fetchAsteroidsNotReactive();
         for (Asterank asterank : asteranks) {
             asterankList.add(asterank.readable_des);
         }

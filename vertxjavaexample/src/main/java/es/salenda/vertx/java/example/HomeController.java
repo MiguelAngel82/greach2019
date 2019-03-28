@@ -30,16 +30,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeController extends AbstractVerticle {
-    private Timer timerFibonacci, timerWavToMp3, timerPackagesReactive, timerPackagesNotReactive;
+    private Timer timerFibonacci, timerWavToMp3, timerAsteranksReactive, timerAsterankNotReactive;
     private TestService testService;
-    private BintrayClient bintrayClient;
+    private AsterankClient asterankClient;
 
     @Override
     public void start(Future<Void> fut) {
         StopWatch watch = new StopWatch();
         watch.start();
         testService = new TestServiceImpl();
-        bintrayClient = new BintrayClient();
+        asterankClient = new AsterankClient();
 
         MicrometerMetricsOptions options = new MicrometerMetricsOptions()
                 .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
@@ -59,9 +59,9 @@ public class HomeController extends AbstractVerticle {
 
         router.get("/wavToMp3").handler(this::wavToMp3);
 
-        router.get("/packages-reactive").handler(this::packagesReactive);
+        router.get("/asterank-reactive").handler(this::asteranksReactive);
 
-        router.get("/packages-not-reactive").handler(this::packagesNotReactive);
+        router.get("/asterank-not-reactive").handler(this::asteranksNotReactive);
 
         router.route("/metrics").handler(ctx -> {
             String response = registry.scrape();
@@ -75,12 +75,12 @@ public class HomeController extends AbstractVerticle {
                 .builder("resource.wavToMp3")
                 .register(registry);
 
-        timerPackagesReactive = Timer
-                .builder("resource.packages.reactive")
+        timerAsteranksReactive = Timer
+                .builder("resource.asterank.reactive")
                 .register(registry);
 
-        timerPackagesNotReactive = Timer
-                .builder("resource.packages.not.reactive")
+        timerAsterankNotReactive = Timer
+                .builder("resource.asterank.not.reactive")
                 .register(registry);
 
         vertx
@@ -117,38 +117,65 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
-    private void packagesReactive(RoutingContext routingContext) {
-        timerPackagesReactive.record(() -> {
-            Single<String> single = bintrayClient.fetchPackages();
+    private void asteranksReactive(RoutingContext routingContext) {
+        timerAsteranksReactive.record(() -> {
+            Single<String> single = asterankClient.fetchAsteroids();
             single.subscribe(response -> {
                 JsonArray data = new JsonArray(response);
-                List<String> bintrayPackageList;
-                bintrayPackageList = data.stream().map(object -> {
-                    JsonObject bintrayPackageJson = (JsonObject) object;
-                    BintrayPackage bintrayPackage = new BintrayPackage(bintrayPackageJson.getString("name"), bintrayPackageJson.getBoolean("linked"));
-                    return bintrayPackage;
-                }).map(object -> object.name).collect(Collectors.toList());
-                routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(bintrayPackageList));
+                List<String> asteranksList;
+                asteranksList = data.stream().map(object -> {
+                    JsonObject asterankJson = (JsonObject) object;
+                    Asterank asterank = createAsterank(asterankJson);
+                    return asterank;
+                }).map(object -> object.readable_des).collect(Collectors.toList());
+                routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(asteranksList));
             });
         });
     }
 
-    private void packagesNotReactive(RoutingContext routingContext) {
-        timerPackagesNotReactive.record(() -> {
-            Future<JsonArray> response = bintrayClient.fetchPackagesNotReactive();
+    private void asteranksNotReactive(RoutingContext routingContext) {
+        timerAsterankNotReactive.record(() -> {
+            Future<JsonArray> response = asterankClient.fetchAsteroidsNotReactive();
             response.setHandler(handler -> {
                 if (handler.succeeded()) {
                     JsonArray data = handler.result();
-                    List<String> bintrayPackageList;
-                    bintrayPackageList = data.stream().map(object -> {
-                        JsonObject bintrayPackageJson = (JsonObject) object;
-                        BintrayPackage bintrayPackage = new BintrayPackage(bintrayPackageJson.getString("name"), bintrayPackageJson.getBoolean("linked"));
-                        return bintrayPackage;
-                    }).map(object -> object.name).collect(Collectors.toList());
-                    routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(bintrayPackageList));
+                    List<String> asteranksList;
+                    asteranksList = data.stream().map(object -> {
+                        JsonObject asterankJson = (JsonObject) object;
+                        Asterank asterank = createAsterank(asterankJson);
+                        return asterank;
+                    }).map(object -> object.readable_des).collect(Collectors.toList());
+                    routingContext.response().putHeader("content-type", "application/json; charset=utf-8").end(Json.encodePrettily(asteranksList));
                 }
             });
         });
+    }
+
+    private Asterank createAsterank(JsonObject asterankJson) {
+        return new Asterank(
+                asterankJson.getFloat("rms"),
+                asterankJson.getString("epoch"),
+                asterankJson.getString("readable_des"),
+                asterankJson.getFloat("h"),
+                asterankJson.getInteger("num_obs"),
+                asterankJson.getString("ref"),
+                asterankJson.getFloat("g"),
+                asterankJson.getString("last_obs"),
+                asterankJson.getString("comp"),
+                asterankJson.getFloat("m"),
+                asterankJson.getString("u"),
+                asterankJson.getFloat("e"),
+                asterankJson.getFloat("a"),
+                asterankJson.getFloat("om"),
+                asterankJson.getString("pert_p"),
+                asterankJson.getFloat("d"),
+                asterankJson.getFloat("i"),
+                asterankJson.getString("des"),
+                asterankJson.getString("flags"),
+                asterankJson.getInteger("num_opp"),
+                asterankJson.getFloat("w"),
+                asterankJson.getString("pert_c")
+        );
     }
 
     private List<BigInteger> getFibonacciSeries(Integer series) {

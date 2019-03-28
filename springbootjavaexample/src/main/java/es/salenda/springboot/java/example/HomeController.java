@@ -2,10 +2,10 @@ package es.salenda.springboot.java.example;
 
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,12 +17,12 @@ import java.util.List;
 public class HomeController {
 
     final TestService testService;
-    final BintrayClient bintrayClient;
+    final AsterankClient asterankClient;
 
     @Autowired
-    public HomeController(TestService testService, BintrayClient bintrayClient) {
+    public HomeController(TestService testService, AsterankClient asterankClient) {
         this.testService = testService;
-        this.bintrayClient = bintrayClient;
+        this.asterankClient = asterankClient;
     }
 
     @GetMapping(value = "wavToMp3")
@@ -50,27 +50,27 @@ public class HomeController {
         return numbers;
     }
 
-    @GetMapping(value = "/packages-reactive")
+    @GetMapping(value = "/asterank-reactive")
     @ResponseBody
-    @Timed("resource.packages.reactive")
-    public List<String> packages(){
-        List<String> bintrayPackageList = new ArrayList<>();
-        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackages().toIterable();
-        for(BintrayPackage bintrayPackage: bintrayPackages) {
-            bintrayPackageList.add(bintrayPackage.name);
+    @Timed("resource.asterank.reactive")
+    public List<String> asteranks() {
+        List<String> asterankList = new ArrayList<>();
+        Iterable<Asterank> asteranks = asterankClient.fetchAsteroids().toIterable();
+        for (Asterank asterank : asteranks) {
+            asterankList.add(asterank.readable_des);
         }
-        return bintrayPackageList;
+        return asterankList;
     }
 
-    @GetMapping(value = "/packages-not-reactive")
+    @GetMapping(value = "/asterank-not-reactive")
     @ResponseBody
-    @Timed("resource.packages.reactive")
-    public List<String> packagesNotReactive(){
-        List<String> bintrayPackageList = new ArrayList<>();
-        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackagesNotReactive();
-        for(BintrayPackage bintrayPackage: bintrayPackages) {
-            bintrayPackageList.add(bintrayPackage.name);
+    @Timed("resource.asterank.not.reactive")
+    public List<String> packagesNotReactive() {
+        List<String> asterankList = new ArrayList<>();
+        Iterable<Asterank> asteranks = asterankClient.fetchAsteroidsNotReactive();
+        for (Asterank asterank : asteranks) {
+            asterankList.add(asterank.readable_des);
         }
-        return bintrayPackageList;
+        return asterankList;
     }
 }

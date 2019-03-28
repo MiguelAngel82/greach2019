@@ -1,8 +1,5 @@
-package es.salenda.micronaut.graal;
+package es.salenda.springboot.java.example;
 
-import io.micronaut.core.annotation.Introspected;
-
-@Introspected
 public class Asterank {
     Float rms;
     String epoch;

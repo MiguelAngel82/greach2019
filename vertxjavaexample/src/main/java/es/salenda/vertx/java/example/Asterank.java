@@ -1,8 +1,5 @@
-package es.salenda.micronaut.graal;
+package es.salenda.vertx.java.example;
 
-import io.micronaut.core.annotation.Introspected;
-
-@Introspected
 public class Asterank {
     Float rms;
     String epoch;
@@ -26,6 +23,31 @@ public class Asterank {
     Integer num_opp;
     Float w;
     String pert_c;
+
+    public Asterank(Float rms, String epoch, String readable_des, Float h, Integer num_obs, String ref, Float g, String last_obs, String comp, Float m, String u, Float e, Float a, Float om, String pert_p, Float d, Float i, String des, String flags, Integer num_opp, Float w, String pert_c) {
+        this.rms = rms;
+        this.epoch = epoch;
+        this.readable_des = readable_des;
+        H = h;
+        this.num_obs = num_obs;
+        this.ref = ref;
+        G = g;
+        this.last_obs = last_obs;
+        this.comp = comp;
+        M = m;
+        U = u;
+        this.e = e;
+        this.a = a;
+        this.om = om;
+        this.pert_p = pert_p;
+        this.d = d;
+        this.i = i;
+        this.des = des;
+        this.flags = flags;
+        this.num_opp = num_opp;
+        this.w = w;
+        this.pert_c = pert_c;
+    }
 
     public Float getRms() {
         return rms;

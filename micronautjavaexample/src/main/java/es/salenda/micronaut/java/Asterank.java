@@ -1,4 +1,4 @@
-package es.salenda.micronaut.graal;
+package es.salenda.micronaut.java;
 
 import io.micronaut.core.annotation.Introspected;
 

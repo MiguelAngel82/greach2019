@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 @Service
-public class TestServiceImpl implements TestService{
+public class TestServiceImpl implements TestService {
 
     @Override
     public void wavToMp3(File wavFile, File mp3File) throws IOException {
-        String[] mp3Args = { "--preset","standard",
-                "-q","0",
-                "-m","s",
+        String[] mp3Args = {"--preset", "standard",
+                "-q", "0",
+                "-m", "s",
                 wavFile.getAbsolutePath(),
                 mp3File.getAbsolutePath()
         };
