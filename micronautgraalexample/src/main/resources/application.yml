@@ -13,7 +13,5 @@ micronaut:
 endpoints:
     prometheus:
         sensitive: false
-bintray:
-    organization: micronaut
-    repository: profiles
-    apiversion: v1
+asterank:
+    limit: 10

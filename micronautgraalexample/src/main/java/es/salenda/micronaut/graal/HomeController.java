@@ -15,16 +15,12 @@ import java.util.List;
 @Controller("/")
 public class HomeController {
 
-    private final BintrayClient bintrayClient;
-    private final OpenNotifyClient openNotifyClient;
-
-
+    private final AsterankClient asterankClient;
     protected final TestService testService;
 
-    public HomeController(TestService testService, BintrayClient bintrayClient, OpenNotifyClient openNotifyClient) {
+    public HomeController(TestService testService, AsterankClient asterankClient) {
         this.testService = testService;
-        this.bintrayClient = bintrayClient;
-        this.openNotifyClient = openNotifyClient;
+        this.asterankClient = asterankClient;
     }
 
     @Get("/wavToMp3")
@@ -52,31 +48,26 @@ public class HomeController {
         return numbers;
     }
 
-    @Get(uri = "/packages-reactive", produces = MediaType.TEXT_PLAIN)
-    @Timed("resource.packages.reactive")
-    List<String> packages() {
-        List<String> bintrayPackageList = new ArrayList<>();
-        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackages().blockingIterable();
-        for (BintrayPackage bintrayPackage : bintrayPackages) {
-            bintrayPackageList.add(bintrayPackage.name);
+    @Get(uri = "/asterank-reactive", produces = MediaType.TEXT_PLAIN)
+    @Timed("resource.asterank.reactive")
+    List<String> asteranks() {
+        List<String> asterankList = new ArrayList<>();
+        Iterable<Asterank> asteranks = asterankClient.fetchPackages().blockingIterable();
+        for (Asterank asterank : asteranks) {
+            asterankList.add(asterank.readable_des);
         }
-        return bintrayPackageList;
+        return asterankList;
     }
 
-    @Get(uri = "/packages-not-reactive", produces = MediaType.TEXT_PLAIN)
-    @Timed("resource.packages.not.reactive")
-    List<String> packagesNotReactive() {
-        List<String> bintrayPackageList = new ArrayList<>();
-        Iterable<BintrayPackage> bintrayPackages = bintrayClient.fetchPackagesNotReactive();
-        for (BintrayPackage bintrayPackage : bintrayPackages) {
-            bintrayPackageList.add(bintrayPackage.name);
+    @Get(uri = "/asterank-not-reactive", produces = MediaType.TEXT_PLAIN)
+    @Timed("resource.asterank.not.reactive")
+    List<String> asteranksNotReactive() {
+        List<String> asterankList = new ArrayList<>();
+        Iterable<Asterank> asteranks = asterankClient.fetchPackagesNotReactive();
+        for (Asterank asterank : asteranks) {
+            asterankList.add(asterank.readable_des);
         }
-        return bintrayPackageList;
+        return asterankList;
     }
 
-    @Get(uri = "/iss-now", produces = MediaType.TEXT_PLAIN)
-    @Timed("resource.iss-now")
-    String issNow() {
-        return openNotifyClient.fetchInformation().toString();
-    }
 }
