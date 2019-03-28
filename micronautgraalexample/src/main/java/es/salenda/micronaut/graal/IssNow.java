@@ -1,5 +1,8 @@
 package es.salenda.micronaut.graal;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class IssNow {
     IssPosition iss_position;
     String timestamp;

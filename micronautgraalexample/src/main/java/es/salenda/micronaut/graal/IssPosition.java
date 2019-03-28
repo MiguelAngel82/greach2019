@@ -1,5 +1,8 @@
 package es.salenda.micronaut.graal;
 
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
 public class IssPosition {
     String latitude;
     String longitude;

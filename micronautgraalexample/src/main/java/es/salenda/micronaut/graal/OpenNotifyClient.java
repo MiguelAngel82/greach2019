@@ -1,6 +1,5 @@
 package es.salenda.micronaut.graal;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 
@@ -9,5 +8,4 @@ public interface OpenNotifyClient {
 
     @Get("/iss-now.json")
     IssNow fetchInformation();
-
 }
