@@ -57,3 +57,7 @@ java -jar builds/lib/<jar_file>.jar
 ```
 
 Its configured by default to start in 8092 port.
+
+## Benchmark
+
+There are some scripts called `check*.sh` that execute a call to the every framework endpoint in a loop with an elapsed time between on call and another.
