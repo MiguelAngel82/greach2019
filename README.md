@@ -5,13 +5,13 @@ All the projects can be rn with the generated JAR and the Graal project with the
 
 ## Prometheus
 
-To run prometehus in Docker:
+To run Prometheus in Docker:
 
 ```bash
 docker run -d -p 9090:9090 --mount type=bind,source="$(pwd)"/prometheus/prometheus.yml,target=/etc/prometheus/prometheus.yml prom/prometheus --config.file=/etc/prometheus/prometheus.yml
 ```
 
-You can configure `promethues.yml` file to add new artifacts to listen to.
+You can configure `prometheus.yml` file to add new artifacts to listen to.
 
 ## Micronaut
 
@@ -60,4 +60,4 @@ Its configured by default to start in 8092 port.
 
 ## Benchmark
 
-There are some scripts called `check*.sh` that execute a call to the every framework endpoint in a loop with an elapsed time between on call and another.
+There are some scripts called `check*.sh`, inside `script` folder, that execute a call to the every framework endpoint in a loop with an elapsed time between one call and another.
