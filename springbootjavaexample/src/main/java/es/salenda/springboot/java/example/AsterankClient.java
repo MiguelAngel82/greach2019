@@ -16,6 +16,10 @@ public class AsterankClient {
 
     private WebClient client = WebClient.create("http://www.asterank.com");
 
+    /**
+     * Gets API response using reactive client.
+     * @return Flux object wit the response.
+     */
     public Flux<Asterank> fetchAsteroids() {
         Flux<Asterank> result = client.get()
                 .uri("/api/mpc?limit=10")
@@ -25,6 +29,10 @@ public class AsterankClient {
         return result;
     }
 
+    /**
+     * Gets API response using rest template builder.
+     * @return A list of Asteranks objects.
+     */
     public List<Asterank> fetchAsteroidsNotReactive() {
         RestTemplateBuilder builder = new RestTemplateBuilder();
         RestTemplate restTemplate = builder.build();

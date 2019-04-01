@@ -34,6 +34,12 @@ public class HomeController extends AbstractVerticle {
     private TestService testService;
     private AsterankClient asterankClient;
 
+    /**
+     * First of all, a watch is started to measure the start up time.
+     * Then, Micrometer options are set, to get all available metrics. Prometheus is also configured.
+     * Routers to all the endpoints are set and also timers for Micrometer are created.
+     * @param fut
+     */
     @Override
     public void start(Future<Void> fut) {
         StopWatch watch = new StopWatch();
@@ -100,6 +106,10 @@ public class HomeController extends AbstractVerticle {
                 );
     }
 
+    /**
+     * Handler to get Fibonacci response.
+     * @param routingContext
+     */
     private void fibonacci(RoutingContext routingContext) {
         timerFibonacci.record(() -> {
             Integer series = Integer.valueOf(routingContext.request().getParam("series"));
@@ -109,6 +119,10 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
+    /**
+     * Handler to get wav to mp3 transformation response.
+     * @param routingContext
+     */
     private void wavToMp3(RoutingContext routingContext) {
         timerWavToMp3.record(() -> {
             routingContext.response()
@@ -117,6 +131,10 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
+    /**
+     * Handler to get asteranks API reactive response. The response is converted from the JSON array to a Asterank objects list.
+     * @param routingContext
+     */
     private void asteranksReactive(RoutingContext routingContext) {
         timerAsteranksReactive.record(() -> {
             Single<String> single = asterankClient.fetchAsteroids();
@@ -133,6 +151,10 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
+    /**
+     * Handler to get asteranks API response. The response is converted from the JSON array to a Asterank objects list.
+     * @param routingContext
+     */
     private void asteranksNotReactive(RoutingContext routingContext) {
         timerAsterankNotReactive.record(() -> {
             Future<JsonArray> response = asterankClient.fetchAsteroidsNotReactive();
@@ -151,6 +173,11 @@ public class HomeController extends AbstractVerticle {
         });
     }
 
+    /**
+     * Helper method to create an Asterank object from a JSON object.
+     * @param asterankJson JSON object.
+     * @return An Asterank object.
+     */
     private Asterank createAsterank(JsonObject asterankJson) {
         return new Asterank(
                 asterankJson.getFloat("rms"),
@@ -178,6 +205,11 @@ public class HomeController extends AbstractVerticle {
         );
     }
 
+    /**
+     * Helper method to get the list of Fibonacci numbers specified by 'series'.
+     * @param series Fibonacci numbers to get.
+     * @return Fibonacci numbers list.
+     */
     private List<BigInteger> getFibonacciSeries(Integer series) {
         List<BigInteger> numbers = new ArrayList<BigInteger>();
         for (int i = 0; i < series; i++) {
@@ -187,6 +219,10 @@ public class HomeController extends AbstractVerticle {
 
     }
 
+    /**
+     * Helper method to specify the main wav File and the output mp3 file.
+     * @return A string with convertion result.
+     */
     private String wavToMp3() {
         File wavFile = new File("src/main/resources/test.wav");
         File mp3File = new File("src/main/resources/test.mp3");
